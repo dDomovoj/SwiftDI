@@ -11,12 +11,12 @@ import Foundation
 
 final public class DI {
   
-  public static let `default` = DI()
+  internal static let `default` = DI()
   
   private var dependencies = [String: Resolver]()
   
-  public static func configure(container: DI = .default, _ block: (DI) -> Void) {
-    block(container)
+  public static func configure(_ block: (DI) -> Void) {
+    block(.default)
   }
   
   public func shared<T>(_ block: () -> T) {
