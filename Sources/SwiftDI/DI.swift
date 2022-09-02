@@ -1,5 +1,5 @@
 //
-//  SwiftDI.swift
+//  DI.swift
 //  SwiftDI
 //
 //  Created by Roberto Frontado on 30/01/2020.
@@ -9,13 +9,13 @@
 
 import Foundation
 
-final public class SwiftDI {
+final public class DI {
   
-  public static let `default` = SwiftDI()
+  public static let `default` = DI()
   
   private var dependencies = [String: Resolver]()
   
-  public static func configure(container: SwiftDI = .default, _ block: (SwiftDI) -> Void) {
+  public static func configure(container: DI = .default, _ block: (DI) -> Void) {
     block(container)
   }
   
