@@ -1,5 +1,6 @@
 //
 //  Scope.swift
+//  SwiftDI
 //
 //  Created by Dzmitry Duleba on 02/09/2022.
 //
