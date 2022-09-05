@@ -15,22 +15,26 @@ final public class DI {
   
   private var dependencies = [String: Resolver]()
   
+  private func key<T>(for type: T.Type) -> String {
+    String(reflecting: type.self)
+  }
+  
   public static func configure(_ block: (DI) -> Void) {
     block(.default)
   }
   
   public func shared<T>(_ block: () -> T) {
-    let key = String(describing: T.self)
+    let key = self.key(for: T.self)
     dependencies[key] = Resolver.shared(object: block())
   }
   
   public func factory<T>(_ factory: @escaping () -> T) {
-    let key = String(describing: T.self)
+    let key = self.key(for: T.self)
     dependencies[key] = Resolver.factory(block: factory)
   }
   
   public func resolve<T>() -> T {
-    let key = String(describing: T.self)
+    let key = self.key(for: T.self)
     print()
     guard let object = dependencies[key]?.resolve() as? T else {
       fatalError("Dependency '\(T.self)' not resolved!")
