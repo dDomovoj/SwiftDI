@@ -9,18 +9,28 @@
 
 import Foundation
 
+protocol WrappingProtocol {
+  
+  static var wrappedType: Any.Type { get }
+  
+}
+
+extension Optional: WrappingProtocol {
+  
+  static var wrappedType: Any.Type { Wrapped.self }
+  
+}
+
 final public class DI {
   
   internal static let `default` = DI()
   
   private var dependencies = [String: Resolver]()
   
-  private func key<T>(for type: T.Type) -> String {
-    if type is ExpressibleByNilLiteral.Type {
-      let wrapped = type as! Optional<Any>.Type
-      return key(for: wrapped)
+  private func key(for type: Any.Type) -> String {
+    if let wrappingType = type as? WrappingProtocol.Type {
+      return key(for: wrappingType.wrappedType)
     }
-    
     return String(reflecting: type.self)
   }
   
