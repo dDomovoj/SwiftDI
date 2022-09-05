@@ -16,7 +16,12 @@ final public class DI {
   private var dependencies = [String: Resolver]()
   
   private func key<T>(for type: T.Type) -> String {
-    String(reflecting: type.self)
+    if type is ExpressibleByNilLiteral.Type {
+      let wrapped = type as! Optional<Any>.Type
+      return key(for: wrapped)
+    }
+    
+    return String(reflecting: type.self)
   }
   
   public static func configure(_ block: (DI) -> Void) {
@@ -38,6 +43,12 @@ final public class DI {
     
     if let obj = dependencies[key]?.resolve() as? T {
       return obj
+    }
+    // is optional type
+    else if T.self is ExpressibleByNilLiteral.Type {
+      let _result: T? = nil
+      let result = _result!
+      return result
     }
     
     fatalError("Non optional dependency '\(T.self)' not resolved!")
