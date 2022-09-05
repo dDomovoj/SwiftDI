@@ -35,11 +35,17 @@ final public class DI {
   
   public func resolve<T>() -> T {
     let key = self.key(for: T.self)
-    print()
-    guard let object = dependencies[key]?.resolve() as? T else {
-      fatalError("Dependency '\(T.self)' not resolved!")
+    if let obj = dependencies[key]?.resolve() as? T {
+      return obj
     }
     
-    return object
+    fatalError("Non optional dependency '\(T.self)' not resolved!")
   }
+  
+  public func resolve<T>() -> T? {
+    let key = self.key(for: T.self)
+    let obj = dependencies[key]?.resolve() as? T
+    return obj
+  }
+  
 }
