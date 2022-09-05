@@ -35,17 +35,18 @@ final public class DI {
   
   public func resolve<T>() -> T {
     let key = self.key(for: T.self)
+    
     if let obj = dependencies[key]?.resolve() as? T {
       return obj
     }
+    // is optional type
+    else if T.self is ExpressibleByNilLiteral.Type {
+      let _result: T? = nil
+      let result = _result!
+      return result
+    }
     
     fatalError("Non optional dependency '\(T.self)' not resolved!")
-  }
-  
-  public func resolve<T>() -> T? {
-    let key = self.key(for: T.self)
-    let obj = dependencies[key]?.resolve() as? T
-    return obj
   }
   
 }
