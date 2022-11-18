@@ -35,6 +35,11 @@ final public class DI {
     lock.initialize(to: os_unfair_lock())
   }
   
+  deinit {
+    lock.deinitialize(count: 1)
+    lock.deallocate()
+  }
+  
   private func key(for type: Any.Type) -> String {
     if let wrappingType = type as? WrappingProtocol.Type {
       return key(for: wrappingType.wrappedType)
