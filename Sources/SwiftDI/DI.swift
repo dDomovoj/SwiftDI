@@ -8,7 +8,6 @@
 //
 
 import Foundation
-import os
 
 internal protocol WrappingProtocol {
   
@@ -26,19 +25,9 @@ final public class DI {
   
   internal static let `default` = DI()
   
-  private let lock: os_unfair_lock_t
+  private let lock = Lock.make()
   
   private var dependencies = [String: Resolver]()
-  
-  private init() {
-    lock = .allocate(capacity: 1)
-    lock.initialize(to: os_unfair_lock())
-  }
-  
-  deinit {
-    lock.deinitialize(count: 1)
-    lock.deallocate()
-  }
   
   private func key(for type: Any.Type) -> String {
     if let wrappingType = type as? WrappingProtocol.Type {
@@ -55,25 +44,25 @@ final public class DI {
     let key = self.key(for: T.self)
     let obj = block()
     
-    os_unfair_lock_lock(lock)
+    lock.lock()
     dependencies[key] = Resolver.shared(object: obj)
-    os_unfair_lock_unlock(lock)
+    lock.unlock()
   }
   
   public func factory<T>(_ factory: @escaping () -> T) {
     let key = self.key(for: T.self)
     
-    os_unfair_lock_lock(lock)
+    lock.lock()
     dependencies[key] = Resolver.factory(block: factory)
-    os_unfair_lock_unlock(lock)
+    lock.unlock()
   }
   
   internal func resolve<T>() -> T {
     let key = self.key(for: T.self)
     
-    os_unfair_lock_lock(lock)
+    lock.lock()
     let dep = dependencies[key]
-    os_unfair_lock_unlock(lock)
+    lock.unlock()
     
     if let obj = dep?.resolve() as? T {
       return obj
