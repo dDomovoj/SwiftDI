@@ -24,7 +24,7 @@ let package = Package(
             dependencies: [
             ],
             linkerSettings: [
-              .linkedFramework("os")
+//              .linkedFramework("os")
             ]
         ),
     ],
