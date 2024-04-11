@@ -57,7 +57,7 @@ final public class DI {
     lock.unlock()
   }
   
-  internal func resolve<T>() -> T {
+  public func resolve<T>() -> T {
     let key = self.key(for: T.self)
     
     lock.lock()
